@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "DEBUG=app* nodemon src/index.js",
     "start": "NODE_ENV=production node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ./src/",
+    "lint:fix": "eslint ./src/ --fix",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -24,10 +27,15 @@
   },
   "homepage": "https://github.com/edwintrumpet/negoziacf_api_test#readme",
   "dependencies": {
+    "debug": "~2.6.9",
     "dotenv": "~10.0.0",
     "express": "~4.17.1"
   },
   "devDependencies": {
+    "eslint": "~7.30.0",
+    "eslint-config-airbnb-base": "~14.2.1",
+    "eslint-plugin-import": "~2.23.4",
+    "husky": "^6.0.0",
     "nodemon": "~2.0.9"
   }
 }
