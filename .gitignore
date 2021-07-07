@@ -6,3 +6,6 @@ node_modules
 
 # iOS
 .DS_Store
+
+# tests
+coverage
