@@ -1,0 +1,11 @@
+# javaScript
+node_modules
+
+# secrets
+.env
+
+# iOS
+.DS_Store
+
+# tests
+coverage

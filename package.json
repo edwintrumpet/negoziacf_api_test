@@ -1,0 +1,46 @@
+{
+  "name": "negoziacf_api_test",
+  "version": "1.0.0",
+  "description": "API for tech test applying to developer at Negozia Consumer Finance",
+  "main": "index.js",
+  "scripts": {
+    "dev": "DEBUG=app* nodemon src/index.js",
+    "start": "NODE_ENV=production node src/index.js",
+    "lint": "eslint ./src/",
+    "lint:fix": "eslint ./src/ --fix",
+    "test": "jest",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edwintrumpet/negoziacf_api_test.git"
+  },
+  "keywords": [
+    "express",
+    "github actions",
+    "javascript",
+    "jest",
+    "mongodb"
+  ],
+  "author": "Edwin García <spark.com.co@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/edwintrumpet/negoziacf_api_test/issues"
+  },
+  "homepage": "https://github.com/edwintrumpet/negoziacf_api_test#readme",
+  "dependencies": {
+    "debug": "~2.6.9",
+    "dotenv": "~10.0.0",
+    "express": "~4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "~7.30.0",
+    "eslint-config-airbnb-base": "~14.2.1",
+    "eslint-plugin-import": "~2.23.4",
+    "eslint-plugin-jest": "~24.3.6",
+    "husky": "~6.0.0",
+    "jest": "~27.0.6",
+    "nodemon": "~2.0.9",
+    "supertest": "~6.1.3"
+  }
+}
