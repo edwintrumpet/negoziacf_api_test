@@ -1,0 +1,33 @@
+{
+  "name": "negoziacf_api_test",
+  "version": "1.0.0",
+  "description": "API for tech test applying to developer at Negozia Consumer Finance",
+  "main": "index.js",
+  "scripts": {
+    "dev": "DEBUG=app* nodemon src/index.js",
+    "start": "NODE_ENV=production node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edwintrumpet/negoziacf_api_test.git"
+  },
+  "keywords": [
+    "javascript",
+    "express",
+    "mongodb"
+  ],
+  "author": "Edwin García <spark.com.co@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/edwintrumpet/negoziacf_api_test/issues"
+  },
+  "homepage": "https://github.com/edwintrumpet/negoziacf_api_test#readme",
+  "dependencies": {
+    "dotenv": "~10.0.0",
+    "express": "~4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "~2.0.9"
+  }
+}
