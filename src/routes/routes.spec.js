@@ -9,7 +9,7 @@ describe('Routes', () => {
       (response) => expect(response.statusCode).toBe(200),
     ));
     it('Should return a message', () => request.get('/').then(
-      (response) => expect(response.body).toEqual({ message: 'Routes works!' }),
+      (response) => expect(response.body).toEqual({ message: 'Negozia API works!' }),
     ));
   });
 });
