@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const debug = require('debug')('app:db');
 const config = require('../config');
 
@@ -61,6 +61,15 @@ class MongoLib {
       .find(query, { projection })
       .sort(sort)
       .toArray();
+  }
+
+  async update(collection, id, data) {
+    const db = await this.connect();
+    const { upsertedId } = await db
+      .collection(collection)
+      .updateOne({ _id: ObjectId(id) }, { $set: data });
+
+    return upsertedId || id;
   }
 }
 

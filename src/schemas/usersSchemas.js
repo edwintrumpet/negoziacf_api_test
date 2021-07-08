@@ -4,19 +4,26 @@ const id = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 const email = Joi.string().email();
 const password = Joi.string().min(8);
 const role = Joi.string().pattern(/^(admin)|(user)$/);
+const name = Joi.string();
 
 const createUserSchema = {
   email: email.required(),
   password: password.required(),
-  name: Joi.string().required(),
+  name: name.required(),
   role: role.required(),
 };
 
 const queryFilterSchema = {
-  name: Joi.string(),
   email: Joi.string(),
   sortby: Joi.string().pattern(/^(createdAt)|(upsatedAt)|(name)$/),
   sort: Joi.string().pattern(/^(asc)|(desc)$/),
+  name,
+  role,
+};
+
+const updateUserSchema = {
+  email,
+  name,
   role,
 };
 
@@ -26,5 +33,9 @@ const loginSchema = {
 };
 
 module.exports = {
-  createUserSchema, loginSchema, id, queryFilterSchema,
+  createUserSchema,
+  id,
+  loginSchema,
+  queryFilterSchema,
+  updateUserSchema,
 };

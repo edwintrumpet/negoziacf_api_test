@@ -87,6 +87,17 @@ class UsersService {
 
     return this.mongoDB.list(this.collection, filter, projection, sort);
   }
+
+  async updateUser(payload, userId, data) {
+    const { sub, role } = payload;
+
+    if (role !== 'admin' && sub !== userId) {
+      throw Boom
+        .unauthorized('You do not have the permissions to access the resource');
+    }
+
+    return this.mongoDB.update(this.collection, userId, data);
+  }
 }
 
 module.exports = UsersService;
