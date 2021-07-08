@@ -69,8 +69,6 @@ class MongoLib {
       .collection(collection)
       .updateOne(query, { $set: data });
 
-    console.log('upsertedId', updated);
-
     return updated;
   }
 }
