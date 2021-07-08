@@ -96,7 +96,12 @@ class UsersService {
         .unauthorized('You do not have the permissions to access the resource');
     }
 
-    return this.mongoDB.update(this.collection, userId, data);
+    const newData = {
+      ...data,
+      updatedAt: new Date(),
+    };
+
+    return this.mongoDB.update(this.collection, userId, newData);
   }
 }
 
