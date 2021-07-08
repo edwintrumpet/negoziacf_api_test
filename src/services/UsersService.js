@@ -23,6 +23,7 @@ class UsersService {
     const userData = {
       ...user,
       password,
+      deleted: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -39,7 +40,9 @@ class UsersService {
     }
 
     const user = await this.mongoDB.getOne(
-      this.collection, { _id: ObjectId(userId) }, { password: 0 },
+      this.collection,
+      { _id: ObjectId(userId), deleted: false },
+      { password: 0 },
     );
 
     delete user._id;
@@ -68,6 +71,8 @@ class UsersService {
     if (query.role) {
       filter.role = query.role;
     }
+
+    filter.deleted = false;
 
     const sort = {};
 
@@ -101,7 +106,46 @@ class UsersService {
       updatedAt: new Date(),
     };
 
-    return this.mongoDB.update(this.collection, userId, newData);
+    const query = {
+      _id: ObjectId(userId),
+      deleted: false,
+    };
+
+    const updated = await this.mongoDB.update(
+      this.collection, query, newData,
+    );
+
+    if (!updated.matchedCount) {
+      throw Boom.notFound('user does not found');
+    }
+
+    return userId;
+  }
+
+  async deleteUser(payload, userId) {
+    const { sub, role } = payload;
+
+    if (role !== 'admin' && sub !== userId) {
+      throw Boom
+        .unauthorized('You do not have the permissions to access the resource');
+    }
+
+    const data = {
+      deleted: true,
+    };
+
+    const query = {
+      _id: ObjectId(userId),
+      deleted: false,
+    };
+
+    const deleted = await this.mongoDB.update(this.collection, query, data);
+
+    if (!deleted.matchedCount) {
+      throw Boom.notFound('user does not found');
+    }
+
+    return userId;
   }
 }
 
