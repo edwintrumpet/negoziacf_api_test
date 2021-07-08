@@ -45,6 +45,16 @@ const usersRoutes = (app) => {
     },
   );
 
+  router.get('/own', verifyToken, async (req, res, next) => {
+    const { payload } = req;
+    try {
+      const user = await usersService.getUser(payload, payload.sub);
+      res.status(200).json({ message: 'user found', data: user });
+    } catch (err) {
+      next(err);
+    }
+  });
+
   router.get(
     '/:userId',
     validationHandler({ userId: userIdSchema }, 'params'),
