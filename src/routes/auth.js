@@ -34,6 +34,14 @@ const authRoutes = (app) => {
       }
     },
   );
+
+  router.post('/logout', async (req, res, next) => {
+    try {
+      res.clearCookie('token').status(200).json({ message: 'session finished' });
+    } catch (err) {
+      next(err);
+    }
+  });
 };
 
 module.exports = authRoutes;
