@@ -1,18 +1,19 @@
 const Joi = require('joi');
 
-const email = Joi.string().email().required();
-const password = Joi.string().min(8).required();
+const id = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
+const email = Joi.string().email();
+const password = Joi.string().min(8);
 
 const createUserSchema = {
-  email,
-  password,
+  email: email.required(),
+  password: password.required(),
   name: Joi.string().required(),
   role: Joi.string().pattern(/^(admin)|(user)$/).required(),
 };
 
 const loginSchema = {
-  email,
-  password,
+  email: email.required(),
+  password: password.required(),
 };
 
-module.exports = { createUserSchema, loginSchema };
+module.exports = { createUserSchema, loginSchema, id };

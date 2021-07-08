@@ -1,8 +1,8 @@
 const Boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
 
+const { ObjectId } = require('mongodb');
 const MongoLib = require('../lib/Mongo');
-const { createToken } = require('../utils/tokens');
 
 class UsersService {
   constructor() {
@@ -30,24 +30,21 @@ class UsersService {
     return createdUserID;
   }
 
-  async login({ email, password }) {
-    const {
-      password: hash, _id: id, role, name,
-    } = await this.mongoDB.getOne(
-      this.collection, { email }, { password: 1, role: 1, name: 1 },
+  async getUser(payload, userId) {
+    const { sub, role } = payload;
+
+    if (role !== 'admin' && sub !== userId) {
+      throw Boom
+        .unauthorized('You do not have the permissions to access the resource');
+    }
+
+    const user = await this.mongoDB.getOne(
+      this.collection, { _id: ObjectId(userId) }, { password: 0 },
     );
 
-    if (!hash) throw Boom.unauthorized('User or password invalid');
+    delete user._id;
 
-    const match = await bcrypt.compare(password, hash);
-
-    if (!match) throw Boom.unauthorized('User or password invalid');
-
-    const token = createToken({ id, role });
-
-    return {
-      token, role, name, id,
-    };
+    return { id: userId, ...user };
   }
 }
 
