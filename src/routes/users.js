@@ -26,19 +26,3 @@ const usersRoutes = (app) => {
 };
 
 module.exports = usersRoutes;
-
-/**
- * User
- * email
- * password
- * name
- * role
- */
-
-/**
- * create
- * list
- * get
- * update
- * delete
- */
