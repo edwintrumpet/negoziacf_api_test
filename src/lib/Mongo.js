@@ -54,15 +54,25 @@ class MongoLib {
     return db.collection(collection).findOne(query, { projection });
   }
 
-  // update(collection, id, data) {
-  //   return this.connect()
-  //     .then((db) => db.collection(collection).updateOne(
-  //       { _id: ObjectId(id) },
-  //       { $set: data },
-  //       { upsert: true },
-  //     ))
-  //     .then((result) => result.upsertedId || id);
-  // }
+  async list(collection, query, projection, sort) {
+    const db = await this.connect();
+    return db
+      .collection(collection)
+      .find(query, { projection })
+      .sort(sort)
+      .toArray();
+  }
+
+  async update(collection, query, data) {
+    const db = await this.connect();
+    const updated = await db
+      .collection(collection)
+      .updateOne(query, { $set: data });
+
+    console.log('upsertedId', updated);
+
+    return updated;
+  }
 }
 
 module.exports = MongoLib;

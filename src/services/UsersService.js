@@ -1,8 +1,8 @@
 const Boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
 
+const { ObjectId } = require('mongodb');
 const MongoLib = require('../lib/Mongo');
-const { createToken } = require('../utils/tokens');
 
 class UsersService {
   constructor() {
@@ -23,6 +23,7 @@ class UsersService {
     const userData = {
       ...user,
       password,
+      deleted: false,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -30,24 +31,121 @@ class UsersService {
     return createdUserID;
   }
 
-  async login({ email, password }) {
-    const {
-      password: hash, _id: id, role, name,
-    } = await this.mongoDB.getOne(
-      this.collection, { email }, { password: 1, role: 1, name: 1 },
+  async getUser(payload, userId) {
+    const { sub, role } = payload;
+
+    if (role !== 'admin' && sub !== userId) {
+      throw Boom
+        .unauthorized('You do not have the permissions to access the resource');
+    }
+
+    const user = await this.mongoDB.getOne(
+      this.collection,
+      { _id: ObjectId(userId), deleted: false },
+      { password: 0 },
     );
 
-    if (!hash) throw Boom.unauthorized('User or password invalid');
+    delete user._id;
 
-    const match = await bcrypt.compare(password, hash);
+    return { id: userId, ...user };
+  }
 
-    if (!match) throw Boom.unauthorized('User or password invalid');
+  async listUsers(role, query) {
+    if (role !== 'admin') {
+      throw Boom
+        .unauthorized('You do not have the permissions to access the resource');
+    }
 
-    const token = createToken({ id, role });
+    const filter = {};
 
-    return {
-      token, role, name, id,
+    if (query.name) {
+      const regExp = new RegExp(query.name, 'i');
+      filter.name = { $regex: regExp };
+    }
+
+    if (query.email) {
+      const regExp = new RegExp(query.email, 'i');
+      filter.email = { $regex: regExp };
+    }
+
+    if (query.role) {
+      filter.role = query.role;
+    }
+
+    filter.deleted = false;
+
+    const sort = {};
+
+    if (query.sortby) {
+      if (query.sort) {
+        sort[query.sortby] = query.sort === 'desc' ? -1 : 1;
+      } else {
+        sort[query.sortby] = -1;
+      }
+    } else {
+      sort.createdAt = -1;
+    }
+
+    const projection = {
+      password: 0,
     };
+
+    return this.mongoDB.list(this.collection, filter, projection, sort);
+  }
+
+  async updateUser(payload, userId, data) {
+    const { sub, role } = payload;
+
+    if (role !== 'admin' && sub !== userId) {
+      throw Boom
+        .unauthorized('You do not have the permissions to access the resource');
+    }
+
+    const newData = {
+      ...data,
+      updatedAt: new Date(),
+    };
+
+    const query = {
+      _id: ObjectId(userId),
+      deleted: false,
+    };
+
+    const updated = await this.mongoDB.update(
+      this.collection, query, newData,
+    );
+
+    if (!updated.matchedCount) {
+      throw Boom.notFound('user does not found');
+    }
+
+    return userId;
+  }
+
+  async deleteUser(payload, userId) {
+    const { sub, role } = payload;
+
+    if (role !== 'admin' && sub !== userId) {
+      throw Boom
+        .unauthorized('You do not have the permissions to access the resource');
+    }
+
+    const data = {
+      deleted: true,
+    };
+
+    const query = {
+      _id: ObjectId(userId),
+      deleted: false,
+    };
+
+    const deleted = await this.mongoDB.update(this.collection, query, data);
+
+    if (!deleted.matchedCount) {
+      throw Boom.notFound('user does not found');
+    }
+
+    return userId;
   }
 }
 
