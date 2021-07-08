@@ -69,7 +69,23 @@ class UsersService {
       filter.role = query.role;
     }
 
-    return this.mongoDB.list(this.collection, filter);
+    const sort = {};
+
+    if (query.sortby) {
+      if (query.sort) {
+        sort[query.sortby] = query.sort === 'desc' ? -1 : 1;
+      } else {
+        sort[query.sortby] = -1;
+      }
+    } else {
+      sort.createdAt = -1;
+    }
+
+    const projection = {
+      password: 0,
+    };
+
+    return this.mongoDB.list(this.collection, filter, projection, sort);
   }
 }
 
