@@ -2,7 +2,11 @@ const express = require('express');
 
 const UsersService = require('../services/UsersService');
 const validationHandler = require('../middlewares/validationHandler');
-const { createUserSchema, id: userIdSchema } = require('../schemas/usersSchemas');
+const {
+  createUserSchema,
+  id: userIdSchema,
+  queryFilterSchema,
+} = require('../schemas/usersSchemas');
 const { verifyToken } = require('../middlewares/authHandler');
 
 const usersRoutes = (app) => {
@@ -19,6 +23,21 @@ const usersRoutes = (app) => {
       try {
         const createdUserID = await usersService.createUser(user);
         res.status(201).json({ message: 'user created', data: createdUserID });
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.get(
+    '/',
+    verifyToken,
+    validationHandler(queryFilterSchema, 'query'),
+    async (req, res, next) => {
+      const { payload: { role }, query } = req;
+      try {
+        const usersList = await usersService.listUsers(role, query);
+        res.status(200).json({ message: 'list of users', data: usersList });
       } catch (err) {
         next(err);
       }
