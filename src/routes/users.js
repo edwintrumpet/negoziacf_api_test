@@ -6,6 +6,7 @@ const {
   createUserSchema,
   id: userIdSchema,
   queryFilterSchema,
+  updateUserSchema,
 } = require('../schemas/usersSchemas');
 const { verifyToken } = require('../middlewares/authHandler');
 
@@ -53,6 +54,22 @@ const usersRoutes = (app) => {
       try {
         const user = await usersService.getUser(payload, userId);
         res.status(200).json({ message: 'user found', data: user });
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
+
+  router.patch(
+    '/:userId',
+    validationHandler({ userId: userIdSchema }, 'params'),
+    validationHandler(updateUserSchema),
+    verifyToken,
+    async (req, res, next) => {
+      const { payload, params: { userId }, body } = req;
+      try {
+        const updatedUserID = await usersService.updateUser(payload, userId, body);
+        res.status(200).json({ message: 'user updated', data: { id: updatedUserID } });
       } catch (err) {
         next(err);
       }
