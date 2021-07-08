@@ -46,6 +46,31 @@ class UsersService {
 
     return { id: userId, ...user };
   }
+
+  async listUsers(role, query) {
+    if (role !== 'admin') {
+      throw Boom
+        .unauthorized('You do not have the permissions to access the resource');
+    }
+
+    const filter = {};
+
+    if (query.name) {
+      const regExp = new RegExp(query.name, 'i');
+      filter.name = { $regex: regExp };
+    }
+
+    if (query.email) {
+      const regExp = new RegExp(query.email, 'i');
+      filter.email = { $regex: regExp };
+    }
+
+    if (query.role) {
+      filter.role = query.role;
+    }
+
+    return this.mongoDB.list(this.collection, filter);
+  }
 }
 
 module.exports = UsersService;
