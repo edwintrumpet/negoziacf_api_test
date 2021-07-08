@@ -15,6 +15,8 @@ const createUserSchema = {
 const queryFilterSchema = {
   name: Joi.string(),
   email: Joi.string(),
+  sortby: Joi.string().pattern(/^(createdAt)|(upsatedAt)|(name)$/),
+  sort: Joi.string().pattern(/^(asc)|(desc)$/),
   role,
 };
 

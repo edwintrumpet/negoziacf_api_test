@@ -54,9 +54,13 @@ class MongoLib {
     return db.collection(collection).findOne(query, { projection });
   }
 
-  async list(collection, query, options) {
+  async list(collection, query, projection, sort) {
     const db = await this.connect();
-    return db.collection(collection).find(query, options).toArray();
+    return db
+      .collection(collection)
+      .find(query, { projection })
+      .sort(sort)
+      .toArray();
   }
 }
 
