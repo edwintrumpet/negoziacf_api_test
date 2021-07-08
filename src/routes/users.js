@@ -75,6 +75,24 @@ const usersRoutes = (app) => {
       }
     },
   );
+
+  router.delete(
+    '/:userId',
+    validationHandler({ userId: userIdSchema }, 'params'),
+    verifyToken,
+    async (req, res, next) => {
+      const { payload, params: { userId } } = req;
+      try {
+        const deletedUserID = await usersService.deleteUser(payload, userId);
+        res.status(200).json({
+          message: 'user deleted',
+          data: { id: deletedUserID },
+        });
+      } catch (err) {
+        next(err);
+      }
+    },
+  );
 };
 
 module.exports = usersRoutes;
