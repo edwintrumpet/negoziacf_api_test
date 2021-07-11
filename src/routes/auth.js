@@ -27,6 +27,7 @@ const authRoutes = (app) => {
             httpOnly: !isDev,
             secure: !isDev,
             expires: nextYear(),
+            sameSite: isDev ? 'lax' : 'none',
           })
           .json({ message: 'success login', data: { id, name, role } });
       } catch (err) {
